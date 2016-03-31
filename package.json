@@ -32,7 +32,8 @@
     "test": "grunt test",
     "fulltest": "grunt",
     "lint": "eslint .",
-    "prepublish": "grunt combine bookmarklet uglify jsdoc"
+    "prepublish": "grunt combine bookmarklet uglify jsdoc",
+    "uglify": "uglifyjs dist/coach.js --compress side_effects=false,negate_iife=false --mangle > dist/coach.min.js"
   },
   "devDependencies": {
     "chai": "^3.5.0",
@@ -49,7 +50,7 @@
     "longjohn": "0.2.11",
     "mkdirp": "^0.5.1",
     "mocha": "^2.4.5",
-    "uglify-js": "2.6.2"
+    "uglify-js": "^2.6.2"
   },
   "homepage": "https://www.sitespeed.io/coach",
   "license": "MIT",
