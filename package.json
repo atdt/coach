@@ -31,8 +31,11 @@
     "bookmarklet": "npm run domconsole && bookmarkletify dist/domconsole.js -o dist/coach.bookmarklet.js",
     "domconsole": "tools/domconsole.js dist/coach.js dist/domconsole.js",
     "combine": "mkdirp dist && node lib/dom/combine dist/coach.js",
-    "test": "grunt test",
-    "fulltest": "grunt",
+    "test:api": "mocha --recursive test/api",
+    "test:dom": "mocha --recursive test/dom",
+    "test:har": "mocha --recursive test/har",
+    "test:merge": "mocha --recursive test/merge",
+    "test": "mocha --recursive test/api test/dom test/har test/merge",
     "lint": "eslint .",
     "prepublish": "grunt combine bookmarklet uglify jsdoc",
     "uglify": "uglifyjs dist/coach.js --compress side_effects=false,negate_iife=false --mangle > dist/coach.min.js"
