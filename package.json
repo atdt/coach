@@ -38,7 +38,7 @@
     "test": "mocha --recursive test/api test/dom test/har test/merge",
     "jsdoc": "jsdoc -R README.md -r -d dist/doc lib",
     "lint": "eslint .",
-    "prepublish": "grunt combine bookmarklet uglify jsdoc",
+    "prepublish": "npm run combine && npm run bookmarklet && npm run uglify && npm run jsdoc",
     "uglify": "uglifyjs dist/coach.js --compress side_effects=false,negate_iife=false --mangle > dist/coach.min.js"
   },
   "devDependencies": {
