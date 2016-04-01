@@ -36,6 +36,7 @@
     "test:har": "mocha --recursive test/har",
     "test:merge": "mocha --recursive test/merge",
     "test": "mocha --recursive test/api test/dom test/har test/merge",
+    "jsdoc": "jsdoc -R README.md -r -d dist/doc lib",
     "lint": "eslint .",
     "prepublish": "grunt combine bookmarklet uglify jsdoc",
     "uglify": "uglifyjs dist/coach.js --compress side_effects=false,negate_iife=false --mangle > dist/coach.min.js"
@@ -54,6 +55,7 @@
     "grunt-jsdoc": "1.1.0",
     "grunt-mocha-cli": "2.0.0",
     "http2": "molnarg/node-http2#520d13",
+    "jsdoc": "^3.4.0",
     "longjohn": "0.2.11",
     "mkdirp": "^0.5.1",
     "mocha": "^2.4.5",
