@@ -29,22 +29,6 @@ module.exports = function(grunt) {
       target: ['lib/dom/*/**.js']
     },
 
-    connect: {
-      server: {
-        options: {
-          port: 8282,
-          base: 'test/http-server'
-        }
-      },
-      serverh2: {
-        options: {
-          port: 8383,
-          protocol: 'http2',
-          base: 'test/http-server'
-        }
-      }
-    },
-
     mochacli: {
       all: ["test/dom/*/*Test.js", "test/har/**/*Test.js", "test/api/**/*Test.js", "test/merge/*Test.js"]
     },
@@ -60,15 +44,14 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-eslint');
-  grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks("grunt-mocha-cli");
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-bookmarklet-wrapper');
 
-  grunt.registerTask('default', ['eslint', 'combine', 'uglify', 'bookmarklet', 'connect', 'mochacli', 'jsdoc']);
+  grunt.registerTask('default', ['eslint', 'combine', 'uglify', 'bookmarklet', 'mochacli', 'jsdoc']);
 
   grunt.registerTask('dom', ['combine', 'uglify']);
-  grunt.registerTask('test', ['connect', 'mochacli']);
+  grunt.registerTask('test', ['mochacli']);
 
   grunt.registerTask('combine', 'Combine all the javascripts', function() {
     grunt.file.mkdir('dist');
