@@ -1,7 +1,10 @@
+#!/usr/bin/env node
+
 'use strict';
+
 let path = require('path'),
   fs = require('fs'),
-  packageInfo = require('../../package'),
+  packageInfo = require('../package'),
   filter = require('filter-files');
 
 module.exports = function(filename) {
@@ -14,7 +17,7 @@ module.exports = function(filename) {
       return scripts;
     };
 
-    let utilsSrc = fs.readFileSync(path.join(__dirname, 'util.js'));
+    let utilsSrc = fs.readFileSync(path.join(__dirname, '../lib/dom/util.js'));
     let calculateScoreSrc = fs.readFileSync(path.join(__dirname, 'calculateScore.js'));
 
     let categoryDirs = filter.sync(__dirname, filterDirs, false);
