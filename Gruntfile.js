@@ -1,5 +1,5 @@
 var combine = require('./lib/dom/combine'),
-  bookmarklet = require('./lib/dom/bookmarklet');
+  bookmarklet = require('./tools/domconsole');
 module.exports = function(grunt) {
 
   grunt.initConfig({
@@ -7,7 +7,7 @@ module.exports = function(grunt) {
     bookmarklet_wrapper: {
       default_options: {
         files: {
-          'dist/coach.bookmarklet.js': ['dist/bookmarklet.js']
+          'dist/coach.bookmarklet.js': ['dist/domconsole.js']
         }
       }
     },
@@ -76,8 +76,7 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('create-bookmarklet', 'Create the bookmarklet', function() {
-    grunt.file.mkdir('dist');
-    bookmarklet('dist/bookmarklet.js');
+    bookmarklet('dist/coach.js', 'dist/domconsole.js');
   });
 
   grunt.registerTask('bookmarklet', ['create-bookmarklet', 'bookmarklet_wrapper']);

@@ -28,6 +28,8 @@
     "url": "https://github.com/sitespeedio/coach/issues"
   },
   "scripts": {
+    "bookmarklet": "npm run domconsole && bookmarkletify dist/domconsole.js -o dist/coach.bookmarklet.js",
+    "domconsole": "tools/domconsole.js dist/coach.js dist/domconsole.js",
     "combine": "mkdirp dist && node lib/dom/combine dist/coach.js",
     "test": "grunt test",
     "fulltest": "grunt",
@@ -36,6 +38,7 @@
     "uglify": "uglifyjs dist/coach.js --compress side_effects=false,negate_iife=false --mangle > dist/coach.min.js"
   },
   "devDependencies": {
+    "bookmarkletify": "^1.0.0",
     "chai": "^3.5.0",
     "chai-as-promised": "^5.2.0",
     "eslint": "^2.5.0",
