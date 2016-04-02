@@ -2,61 +2,62 @@
 
 'use strict';
 
-let path = require('path'),
+const path = require('path'),
   fs = require('fs'),
   packageInfo = require('../package'),
   filter = require('filter-files');
 
+const filterJsFiles = (file) => (path.extname(file) === '.js');
+const filterDirs = (file, dir) => (fs.statSync(path.resolve(dir, file)).isDirectory());
+const fileContentsByName = (scripts, file) => {
+  const name = path.basename(file, '.js');
+  scripts[name] = fs.readFileSync(file, 'utf8');
+  return scripts;
+};
+
 module.exports = function(filename) {
 
-    const filterJsFiles = (file) => (path.extname(file) === '.js');
-    const filterDirs = (file, dir) => (fs.statSync(path.resolve(dir, file)).isDirectory());
-    const fileContentsByName = (scripts, file) => {
-      let name = path.basename(file, '.js');
-      scripts[name] = fs.readFileSync(file, 'utf8');
-      return scripts;
-    };
+  const utilsSrc = fs.readFileSync(path.join(__dirname, '../lib/dom/util.js')),
+    calculateScoreSrc = fs.readFileSync(path.join(__dirname, 'calculateScore.js')),
+    categoriesPath = path.join(__dirname, '../lib/dom');
 
-    let utilsSrc = fs.readFileSync(path.join(__dirname, '../lib/dom/util.js'));
-    let calculateScoreSrc = fs.readFileSync(path.join(__dirname, 'calculateScore.js'));
+  const categoryDirs = filter.sync(categoriesPath, filterDirs, false);
 
-    let categoryDirs = filter.sync(__dirname, filterDirs, false);
+  const scriptsByCategory = categoryDirs.reduce((byCategory, categoryDir) => {
+    const categoryName = path.basename(categoryDir);
+    byCategory[categoryName] = filter.sync(categoryDir, filterJsFiles, false)
+      .reduce(fileContentsByName, {});
+    return byCategory;
+  }, {});
 
-    let scriptsByCategory = categoryDirs.reduce((byCategory, categoryDir) => {
-      let categoryName = path.basename(categoryDir);
-      byCategory[categoryName] = filter.sync(categoryDir, filterJsFiles, false)
-        .reduce(fileContentsByName, {});
-      return byCategory;
-    }, {});
-
-    var pushResultsSrc = Object.keys(scriptsByCategory).map((categoryId) => {
-      let scriptsById = scriptsByCategory[categoryId];
-      let pushResultsSrc = Object.keys(scriptsById).map((scriptId) =>
+  const pushResultsSrc = Object.keys(scriptsByCategory).map((categoryId) => {
+    let scriptsById = scriptsByCategory[categoryId];
+    let pushResultsSrc = Object.keys(scriptsById).map((scriptId) =>
         `try {
             ${categoryId}Results["${scriptId}"] = ${scriptsById[scriptId]}
           } catch(err) {
             ${categoryId}Errors["${scriptId}"] = err.message;
           }`)
-        .join('\n');
+      .join('\n');
 
-      // info got some special treatment since it is not an advice
-      // just some interesting info
-      let categoryResults;
-      if (categoryId === 'info' || categoryId === 'timings') {
-        categoryResults = `advice["${categoryId}"] = ${categoryId}Results;`;
-      } else {
-        categoryResults =
-          `advice["${categoryId}"] = {
+    // info got some special treatment since it is not an advice
+    // just some interesting info
+    let categoryResults;
+    if (categoryId === 'info' || categoryId === 'timings') {
+      categoryResults = `advice["${categoryId}"] = ${categoryId}Results;`;
+    } else {
+      categoryResults =
+        `advice["${categoryId}"] = {
             'adviceList': ${categoryId}Results
           };`;
-      }
+    }
 
-      categoryResults += `
+    categoryResults += `
       if (Object.keys(${categoryId}Errors).length > 0) {
         errors["${categoryId}"] = ${categoryId}Errors;
       }`;
 
-      return `
+    return `
   var ${categoryId}Results = {},
       ${categoryId}Errors = {};
 
@@ -65,10 +66,10 @@ module.exports = function(filename) {
   ${categoryResults}
 
   `;
-    }).join('\n');
+  }).join('\n');
 
-    const combinedSrc =
-`(function() {
+  const combinedSrc =
+    `(function() {
   if (typeof window !== 'undefined') {
     ${utilsSrc}
     return (function(util) {
@@ -92,7 +93,7 @@ module.exports = function(filename) {
   })();
 `;
 
-    fs.writeFileSync(filename, combinedSrc);
+  fs.writeFileSync(filename, combinedSrc);
 };
 
 if (!module.parent) {
