@@ -23,6 +23,7 @@ before_install:
 - sh -e /etc/init.d/xvfb start
 script:
 - npm run lint
+- npm run prepublish
 - npm test
 - node ./bin/webcoach.js -b chrome https://www.sitespeed.io > output.json
 - node ./bin/webcoach.js -b firefox https://www.sitespeed.io > output.json
